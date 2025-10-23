@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+## Bewerbungsform
 
-## Getting Started
+| Feld                                        | Beschreibung                                                           |
+| ------------------------------------------- | ---------------------------------------------------------------------- |
+| **Name der Agentur**                        |                                                                        |
+| **Anschrift der Agentur**                   |                                                                        |
+| **Geschlecht**                              | ☐ männlich ☐ weiblich ☐ divers                                         |
+| **Nachname**                                |                                                                        |
+| **Vorname**                                 |                                                                        |
+| **Geburtsdatum**                            |                                                                        |
+| **Geburtsort**                              |                                                                        |
+| **Geburtsland**                             |                                                                        |
+| **Straße, Hausnummer**                      |                                                                        |
+| **Postleitzahl, Ort**                       |                                                                        |
+| **Land**                                    |                                                                        |
+| **Staatsangehörigkeit**                     |                                                                        |
+| Feld                                        | Beschreibung                                                           |
+| ------------------------------------------- | ---------------------------------------------------------------------- |
+| **Semesterferien (von – bis)**              |                                                                        |
+| **Universität**                             |                                                                        |
+| **Studienfach**                             |                                                                        |
+| **Deutschniveau**                           | ☐ A1 ☐ A2 ☐ B1 ☐ B2 ☐ C1                                               |
+| **Weitere Sprachkenntnisse / Sprachniveau** | Sprache / Niveau  Sprache / Niveau  Sprache / Niveau  Sprache / Niveau |
+| **Führerschein**                            |                                                                        |
+| **Kannst Du Fahrrad fahren?**               | ☐ Ja ☐ Nein                                                            |
+| **Schichtbereitschaft**                     | ☐ Ja ☐ Nein                                                            |
+| **Gesundheitliche Einschränkungen**         |                                                                        |
+| **Allergien**                               |                                                                        |
+| **Kleidergröße**                            |                                                                        |
+| **Schuhgröße**                              |                                                                        |
+| **Aufenthalt in Deutschland**               | ☐ Ja ☐ Nein                                                            |
+| **Wenn ja, wo und Zeitraum**                | Wo:   Zeitraum:                                                        |
+| **Steuer-ID (falls vorhanden)**             |                                                                        |
+| **Telefonnummer**                           |                                                                        |
+| **E-Mail**                                  |                                                                        |
+| **Instagram-Profil**                        |                                                                        |
+| Feld                                        | Beschreibung                                                           |
+| -------------------------                   | ------------                                                           |
+| **Notfall-Kontaktperson**                   |                                                                        |
+| **Notfall-Telefonnummer**                   |                                                                        |
 
-First, run the development server:
+Ort, Datum, Unterschrift:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Form Title: Student Visa for 3 months
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Duration: 3 monaten
+- Foto
+- Passport
+- Studium Zeugnis
+- Bewerbungsformular
+- immatrikulationsbescheinigung (form)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Form Title: KKB Visa for 3 months
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Duration: 3 monaten
+- Foto
+- Passport
+- Studium Zeugnis (optional)
+- Sprachnachweis (optional)
+- Bewerbungsformular
 
-## Learn More
+## Form Title: KKB Visa for 8 months
 
-To learn more about Next.js, take a look at the following resources:
+- Duration: 8 monaten
+- Foto
+- Passport
+- Studium Zeugnis (optional)
+- Sprachnachweis (optional)
+- Bewerbungsformular
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Roles
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- user
+- admin (/admin route)
+- reviewer
 
-## Deploy on Vercel
+## Application process
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. [USER] submits application
+   status: [pending]
+2. [REVIEWER] reviews the application (intro video and other documents)
+   status:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [cancelled] ->
+- [confirmed_meeting] -> meeting is booked
+- [confirmed] -> confirmed without booking a meeting
+
+## Cloud Resources
+
+- Hosting: Vercel
+- DB: Neon DB
+- ORM: Prisma
+- Auth: Better-Auth
+- File Storage: UploadThing
