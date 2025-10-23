@@ -1,12 +1,13 @@
 import { ApplicationFormData } from "@/components/forms/application-form/application-form-schema";
+import { env } from "@/env";
 
 export class TelegramAPI {
   private botToken: string;
   private chatId: string;
 
   constructor() {
-    this.botToken = process.env.TELEGRAM_BOT_TOKEN || "";
-    this.chatId = process.env.TELEGRAM_BOT_CHAT_ID || "";
+    this.botToken = env.TELEGRAM_BOT_TOKEN;
+    this.chatId = env.TELEGRAM_BOT_CHAT_ID;
     if (!this.botToken || !this.chatId) {
       console.error(
         "Telegram bot token or chat ID not found in environment variables"
