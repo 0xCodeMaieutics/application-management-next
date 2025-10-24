@@ -8,7 +8,7 @@ export const applicationFormSchema = z.object({
   // Personal Information
   firstName: z.string().min(1, "Vorname ist erforderlich"),
   lastName: z.string().min(1, "Nachname ist erforderlich"),
-  gender: z.enum(["männlich", "weiblich", "divers"]).optional(),
+  gender: z.enum(["männlich", "weiblich", "divers"]),
   nationality: z.string().min(1, "Staatsangehörigkeit ist erforderlich"),
   birthDate: z.string().min(1, "Geburtsdatum ist erforderlich"),
   birthPlace: z.string().min(1, "Geburtsort ist erforderlich"),
@@ -38,8 +38,9 @@ export const applicationFormSchema = z.object({
 
   // Previous stay in Germany
   previousStayInGermany: z.enum(["Ja", "Nein"]).optional(),
-  previousStayWhere: z.string().optional(),
-  previousStayPeriod: z.string().optional(),
+  previousStayPlace: z.string().optional(),
+  previousStayPeriodFrom: z.string().optional(),
+  previousStayPeriodTo: z.string().optional(),
 
   // Contact Information
   taxId: z.string().optional(),
@@ -48,20 +49,22 @@ export const applicationFormSchema = z.object({
   instagram: z.string().optional(),
 
   // Emergency Contact
-  emergencyContact: z.string().min(1, "Notfall-Kontaktperson ist erforderlich"),
+  emergencyContactName: z
+    .string()
+    .min(1, "Notfall-Kontaktperson ist erforderlich"),
   emergencyPhone: z.string().min(1, "Notfall-Telefonnummer ist erforderlich"),
 
   // File Uploads
-  foto: z
-    .instanceof(File, { message: "Foto ist erforderlich" })
-    .refine((file) => acceptedImageTypes.includes(file.type), {
-      message: "Nur PNG oder JPG Dateien sind erlaubt",
-    }),
-  passport: z
-    .instanceof(File, { message: "Reisepass ist erforderlich" })
-    .refine((file) => acceptedPassportTypes.includes(file.type), {
-      message: "Nur PDF Dateien sind erlaubt",
-    }),
+  // foto: z
+  //   .instanceof(File, { message: "Foto ist erforderlich" })
+  //   .refine((file) => acceptedImageTypes.includes(file.type), {
+  //     message: "Nur PNG oder JPG Dateien sind erlaubt",
+  //   }),
+  // passport: z
+  //   .instanceof(File, { message: "Reisepass ist erforderlich" })
+  //   .refine((file) => acceptedPassportTypes.includes(file.type), {
+  //     message: "Nur PDF Dateien sind erlaubt",
+  //   }),
   // introductionVideo: z
   //   .instanceof(File, { message: "Ein Vorstellungsvideo ist erforderlich" })
   //   .refine((file) => acceptedVideoTypes.includes(file.type), {

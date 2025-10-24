@@ -1,0 +1,63 @@
+model Application {
+  id String @id
+
+  // Personal Information
+  firstName    String
+  lastName     String
+  gender       String
+  nationality  String
+  birthDate  DateTime @db.Date
+  birthPlace   String
+  birthCountry String
+  street       String
+  postalCode   String
+  country      String
+  city         String
+
+  // Agency Information
+  agencyName    String
+  agencyAddress String
+
+  // Study Information
+  semesterBreak      String?
+  university         String?
+  studySubject       String?
+  germanLevel        String?
+  otherLanguages     String?
+  driverLicense      String?
+  canRideBike        String?
+  shiftWork          String?
+  healthRestrictions String?
+  allergies          String?
+  clothingSize       String?
+  shoeSize           String?
+
+  // Previous Experience
+  hasBeenInCountryBefore Boolean
+  previousStayCountry    String?
+  previousStayPlace      String?
+  previousStayPeriodFrom DateTime? @db.Date
+  previousStayPeriodTo   DateTime? @db.Date
+
+  // Contact Information
+  phone     String
+  email     String
+  taxId     String?
+  instagram String?
+
+  // Files
+  fotoUrl     String
+  passportUrl String
+
+  // Emergency Contact
+  emergencyContactName  String
+  emergencyContactPhone String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
+
+  @@map("application")
+}

@@ -74,8 +74,8 @@ export class TelegramAPI {
 
     message += formatSection("AUFENTHALT IN DEUTSCHLAND", {
       previousStayInGermany: data.previousStayInGermany,
-      previousStayWhere: data.previousStayWhere,
-      previousStayPeriod: data.previousStayPeriod,
+      previousStayWhere: data.previousStayPlace,
+      previousStayPeriod: data.previousStayPeriodFrom,
     });
 
     message += formatSection("KONTAKTDATEN", {
@@ -86,7 +86,7 @@ export class TelegramAPI {
     });
 
     message += formatSection("NOTFALLKONTAKT", {
-      emergencyContact: data.emergencyContact,
+      emergencyContactName: data.emergencyContactName,
       emergencyPhone: data.emergencyPhone,
     });
 
@@ -207,14 +207,6 @@ export class TelegramAPI {
       throw new Error("Failed to send message to Telegram");
     }
     const filePromises = [];
-    if (data.introductionVideo) {
-      filePromises.push(
-        this.sendVideo(
-          data.introductionVideo,
-          `🎥 Vorstellungsvideo: ${data.firstName} ${data.lastName}`
-        )
-      );
-    }
     if (data.foto) {
       filePromises.push(
         this.sendPhoto(

@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
       previousStayInGermany: formData.get(
         "previousStayInGermany"
       ) as ApplicationFormData["previousStayInGermany"],
-      previousStayWhere: formData.get("previousStayWhere") as string,
+      previousStayPlace: formData.get("previousStayWhere") as string,
       previousStayPeriod: formData.get("previousStayPeriod") as string,
 
       taxId: formData.get("taxId") as string,

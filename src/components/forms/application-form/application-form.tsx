@@ -18,12 +18,15 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { FileUpload } from "@/components/ui/file-upload";
-import { applicationFormSchema } from "./application-form-schema";
+import {
+  ApplicationFormData,
+  applicationFormSchema,
+} from "./application-form-schema";
 import { Textarea } from "@/components/ui/textarea";
+import { useMutation } from "@tanstack/react-query";
+import { saveKKBApplication } from "@/utils/server-actions/application/save-kkb-application";
 
 export function ApplicationForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const form = useForm<z.infer<typeof applicationFormSchema>>({
     resolver: zodResolver(applicationFormSchema),
     defaultValues: {
@@ -60,14 +63,15 @@ export function ApplicationForm() {
       clothingSize: "M",
       shoeSize: "38",
       previousStayInGermany: "Ja",
-      previousStayWhere: "Hamburg",
-      previousStayPeriod: "Juni 2023 - August 2023",
+      previousStayPlace: "Hamburg",
+      previousStayPeriodFrom: "Juni 2023",
+      previousStayPeriodTo: "August 2023",
       taxId: "12345678901",
       phone: "+49 151 12345678",
 
       email: "anna.schmidt@email.de",
       instagram: "@anna_schmidt_99",
-      emergencyContact: "Maria Schmidt",
+      emergencyContactName: "Maria Schmidt",
       emergencyPhone: "+49 89 98765432",
     },
   });
@@ -138,39 +142,20 @@ export function ApplicationForm() {
     }
   }, [form.formState.errors, form.formState.isSubmitted, scrollToFirstError]);
 
-  async function onSubmit(data: z.infer<typeof applicationFormSchema>) {
-    setIsSubmitting(true);
-
-    const formData = new FormData();
-    if (data.foto) {
-      formData.append("foto", data.foto);
-    }
-    if (data.passport) {
-      formData.append("passport", data.passport);
-    }
-    Object.entries(data).forEach(([key, value]) => {
-      if (value !== undefined && value !== null && !(value instanceof File)) {
-        formData.append(key, String(value));
-      }
+  const { mutateAsync: submitApplication, isPending: isSubmitting } =
+    useMutation<void, Error, ApplicationFormData, unknown>({
+      mutationFn: (data) => saveKKBApplication(data),
+      onSuccess: () => {
+        toast.success("Bewerbung erfolgreich eingereicht!", {
+          description:
+            "Ihre Bewerbung wurde erfolgreich an unser Team gesendet und per Telegram übermittelt.",
+          position: "bottom-right",
+        });
+      },
+      onError: () => {
+        toast.error("Fehler bei der Einreichung der Bewerbung");
+      },
     });
-
-    const response = await fetch("/api/telegram/submit-application", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to submit application");
-    }
-
-    toast.success("Bewerbung erfolgreich eingereicht!", {
-      description:
-        "Ihre Bewerbung wurde erfolgreich an unser Team gesendet und per Telegram übermittelt.",
-      position: "bottom-right",
-    });
-
-    setIsSubmitting(false);
-  }
 
   // Handle validation errors on form submission
   function onInvalid() {
@@ -188,7 +173,10 @@ export function ApplicationForm() {
 
       <form
         id="application-form"
-        onSubmit={form.handleSubmit(onSubmit, onInvalid)}
+        onSubmit={form.handleSubmit(
+          (data) => submitApplication(data),
+          onInvalid
+        )}
         noValidate
       >
         <div className="space-y-8">
@@ -818,16 +806,16 @@ export function ApplicationForm() {
               {form.watch("previousStayInGermany") === "Ja" && (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Controller
-                    name="previousStayWhere"
+                    name="previousStayPlace"
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor="previousStayWhere">
+                        <FieldLabel htmlFor="previousStayPlace">
                           Wenn ja, wo
                         </FieldLabel>
                         <Input
                           {...field}
-                          id="previousStayWhere"
+                          id="previousStayPlace"
                           aria-invalid={fieldState.invalid}
                           placeholder="Stadt/Region in Deutschland"
                         />
@@ -838,18 +826,18 @@ export function ApplicationForm() {
                     )}
                   />
                   <Controller
-                    name="previousStayPeriod"
+                    name="previousStayPeriodFrom"
                     control={form.control}
                     render={({ field, fieldState }) => (
                       <Field data-invalid={fieldState.invalid}>
-                        <FieldLabel htmlFor="previousStayPeriod">
+                        <FieldLabel htmlFor="previousStayPeriodFrom">
                           Zeitraum
                         </FieldLabel>
                         <Input
                           {...field}
-                          id="previousStayPeriod"
+                          id="previousStayPeriodFrom"
                           aria-invalid={fieldState.invalid}
-                          placeholder="z.B. Juli 2023 - September 2023"
+                          placeholder="z.B. Juli 2023"
                         />
                         {fieldState.invalid && (
                           <FieldError errors={[fieldState.error]} />
@@ -956,16 +944,16 @@ export function ApplicationForm() {
             <h2 className="text-lg font-semibold mb-4">Notfallkontakt</h2>
             <FieldGroup>
               <Controller
-                name="emergencyContact"
+                name="emergencyContactName"
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="emergencyContact">
+                    <FieldLabel htmlFor="emergencyContactName">
                       Notfall-Kontaktperson *
                     </FieldLabel>
                     <Input
                       {...field}
-                      id="emergencyContact"
+                      id="emergencyContactName"
                       aria-invalid={fieldState.invalid}
                       placeholder="Vollständiger Name der Kontaktperson"
                     />
