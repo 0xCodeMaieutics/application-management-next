@@ -21,6 +21,11 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
+
+    ENCRYPTION_KEY: z
+      .string()
+      .min(32)
+      .describe("Hexadecimal string of 32 bytes"),
   },
 
   /**
@@ -44,6 +49,8 @@ export const env = createEnv({
     NODE_ENV: process.env.NODE_ENV,
     TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
     TELEGRAM_BOT_CHAT_ID: process.env.TELEGRAM_BOT_CHAT_ID,
+
+    ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
