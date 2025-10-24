@@ -1,0 +1,34 @@
+enum VisaType {
+    KKB_3_MONTHS
+    KKB_8_MONTHS
+    STUDENT
+}
+
+model Visa {
+    id   String   @id
+    type VisaType
+
+    visaKKB     VisaKKB?
+    visaStudent VisaStudent?
+
+    application   Application @relation(fields: [applicationId], references: [id])
+    applicationId String      @unique
+
+    @@map("visa")
+}
+
+model VisaKKB {
+    id   String @id
+    visa Visa   @relation(fields: [id], references: [id])
+
+    @@map("visa_kkb")
+}
+
+model VisaStudent {
+    id   String @id
+    visa Visa   @relation(fields: [id], references: [id])
+
+    certificateOfEnrollment CertificateOfEnrollment?
+
+    @@map("visa_student")
+}

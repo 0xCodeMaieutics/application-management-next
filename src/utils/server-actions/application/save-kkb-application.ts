@@ -3,8 +3,12 @@
 import { ApplicationFormData } from "@/components/forms/application-form/application-form-schema";
 import { prisma } from "@/lib/db/prisma-client";
 import { generateRandomString } from "@/lib/random";
+import { $Enums } from "@prisma/client";
 
-export const saveKKBApplication = async (data: ApplicationFormData) => {
+export const saveKKBApplication = async (
+  data: ApplicationFormData,
+  visaType: $Enums.VisaType
+) => {
   "use server";
 
   await prisma.application.create({
@@ -25,7 +29,12 @@ export const saveKKBApplication = async (data: ApplicationFormData) => {
       agencyName: data.agencyName,
       agencyAddress: data.agencyAddress,
       // Study Information
-      semesterBreak: data.semesterBreak,
+      semesterBreakFrom: data.semesterBreakFrom
+        ? new Date(data.semesterBreakFrom)
+        : null,
+      semesterBreakTo: data.semesterBreakTo
+        ? new Date(data.semesterBreakTo)
+        : null,
       university: data.university,
       studySubject: data.studySubject,
       germanLevel: data.germanLevel,
@@ -58,6 +67,14 @@ export const saveKKBApplication = async (data: ApplicationFormData) => {
       // File Uploads
       fotoUrl: "",
       passportUrl: "",
+
+      visa: {
+        create: {
+          id: generateRandomString(32),
+          type: visaType,
+          visaKKB: { create: {} },
+        },
+      },
     },
   });
 };

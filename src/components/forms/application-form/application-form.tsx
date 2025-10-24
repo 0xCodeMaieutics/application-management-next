@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
-import { useEffect, useCallback, useState } from "react";
+import { useEffect, useCallback } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -25,8 +25,12 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useMutation } from "@tanstack/react-query";
 import { saveKKBApplication } from "@/utils/server-actions/application/save-kkb-application";
+import { useRouter } from "next/navigation";
+import { $Enums } from "@prisma/client";
 
-export function ApplicationForm() {
+export function ApplicationForm({ visaType }: { visaType: $Enums.VisaType }) {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof applicationFormSchema>>({
     resolver: zodResolver(applicationFormSchema),
     defaultValues: {
@@ -48,7 +52,8 @@ export function ApplicationForm() {
       agencyName: "Müller Personalvermittlung GmbH",
       agencyAddress: "Hauptstraße 123, 10115 Berlin, Deutschland",
 
-      semesterBreak: "01.07.2024 - 30.09.2024",
+      semesterBreakFrom: undefined,
+      semesterBreakTo: undefined,
       university: "Ludwig-Maximilians-Universität München",
       studySubject: "Betriebswirtschaftslehre",
       germanLevel: "B2",
@@ -144,13 +149,9 @@ export function ApplicationForm() {
 
   const { mutateAsync: submitApplication, isPending: isSubmitting } =
     useMutation<void, Error, ApplicationFormData, unknown>({
-      mutationFn: (data) => saveKKBApplication(data),
+      mutationFn: (data) => saveKKBApplication(data, visaType),
       onSuccess: () => {
-        toast.success("Bewerbung erfolgreich eingereicht!", {
-          description:
-            "Ihre Bewerbung wurde erfolgreich an unser Team gesendet und per Telegram übermittelt.",
-          position: "bottom-right",
-        });
+        router.push("/applications/success");
       },
       onError: () => {
         toast.error("Fehler bei der Einreichung der Bewerbung");
@@ -166,7 +167,7 @@ export function ApplicationForm() {
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4">
-      <h1 className="text-2xl font-bold mb-2">Bewerbungsformular</h1>
+      <h1 className="text-2xl font-bold mb-2">KKB Bewerbungsformular</h1>
       <p className="text-sm text-muted-foreground mb-6">
         Bitte füllen Sie alle erforderlichen Felder aus.
       </p>
@@ -478,26 +479,50 @@ export function ApplicationForm() {
               Studium & Qualifikationen
             </h2>
             <FieldGroup>
-              <Controller
-                name="semesterBreak"
-                control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="semesterBreak">
-                      Semesterferien (von – bis)
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id="semesterBreak"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="z.B. 01.07.2024 - 31.09.2024"
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
-                )}
-              />
+              <div className="flex gap-3">
+                <Controller
+                  name="semesterBreakFrom"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="semesterBreakFrom">
+                        Semesterferien von
+                      </FieldLabel>
+                      <Input
+                        {...field}
+                        id="semesterBreakFrom"
+                        aria-invalid={fieldState.invalid}
+                        placeholder="z.B. 01.07.2024"
+                        type="date"
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+                <Controller
+                  name="semesterBreakTo"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="semesterBreakTo">
+                        Semesterferien (von – bis)
+                      </FieldLabel>
+                      <Input
+                        {...field}
+                        id="semesterBreakTo"
+                        aria-invalid={fieldState.invalid}
+                        placeholder="z.B. 31.09.2024"
+                        type="date"
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+              </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Controller
@@ -838,6 +863,7 @@ export function ApplicationForm() {
                           id="previousStayPeriodFrom"
                           aria-invalid={fieldState.invalid}
                           placeholder="z.B. Juli 2023"
+                          type="date"
                         />
                         {fieldState.invalid && (
                           <FieldError errors={[fieldState.error]} />

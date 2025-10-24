@@ -1,3 +1,9 @@
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Application {
   id String @id
 
@@ -6,7 +12,7 @@ model Application {
   lastName     String
   gender       String
   nationality  String
-  birthDate  DateTime @db.Date
+  birthDate    DateTime
   birthPlace   String
   birthCountry String
   street       String
@@ -19,7 +25,8 @@ model Application {
   agencyAddress String
 
   // Study Information
-  semesterBreak      String?
+  semesterBreakFrom  DateTime?
+  semesterBreakTo    DateTime?
   university         String?
   studySubject       String?
   germanLevel        String?
@@ -36,8 +43,8 @@ model Application {
   hasBeenInCountryBefore Boolean
   previousStayCountry    String?
   previousStayPlace      String?
-  previousStayPeriodFrom DateTime? @db.Date
-  previousStayPeriodTo   DateTime? @db.Date
+  previousStayPeriodFrom DateTime?
+  previousStayPeriodTo   DateTime?
 
   // Contact Information
   phone     String
@@ -53,11 +60,15 @@ model Application {
   emergencyContactName  String
   emergencyContactPhone String
 
+  status ApplicationStatus? @default(PENDING)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
+
+  visa Visa?
 
   @@map("application")
 }

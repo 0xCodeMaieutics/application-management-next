@@ -17,7 +17,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body className={`flex flex-col h-dvh w-full antialiased`}>
         <ClientProviders>
-          <header>
+          <header className="fixed top-0 left-0 right-0 z-50">
             <nav className="w-full border-b bg-background/50 backdrop-blur-sm px-6 py-8">
               <p className="text-lg font-bold">
                 International Recruitement GmbH

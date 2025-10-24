@@ -54,6 +54,11 @@ void (async function main() {
     await prisma.session.deleteMany();
     await prisma.account.deleteMany();
     await prisma.verification.deleteMany();
+    await prisma.application.deleteMany();
+  } else if (action === "truncate-applications") {
+    await prisma.application.deleteMany();
+  } else if (action === "truncate-users") {
+    await prisma.user.deleteMany();
   }
 
   await prisma.$disconnect();

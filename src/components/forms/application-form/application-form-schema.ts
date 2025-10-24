@@ -23,7 +23,8 @@ export const applicationFormSchema = z.object({
   agencyAddress: z.string().min(1, "Anschrift der Agentur ist erforderlich"),
 
   // Study Information
-  semesterBreak: z.string().optional(),
+  semesterBreakFrom: z.string().optional(),
+  semesterBreakTo: z.string().optional(),
   university: z.string().optional(),
   studySubject: z.string().optional(),
   germanLevel: z.enum(["A1", "A2", "B1", "B2", "C1"]).optional(),

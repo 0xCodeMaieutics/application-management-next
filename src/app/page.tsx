@@ -9,10 +9,10 @@ export default function Home() {
       </h1>
       <div className="w-full flex flex-col items-center justify-center md:flex-row gap-2">
         <Button className="w-full sm:w-52" size={"lg"} asChild>
-          <Link href={"/student-visa"}>Student Visa</Link>
+          <Link href={"/applications/student-visa"}>Student Visa</Link>
         </Button>
         <Button className="w-full sm:w-52" size={"lg"} asChild>
-          <Link href={"/kkb"}>KKB Visa</Link>
+          <Link href={"/applications/kkb"}>KKB Visa</Link>
         </Button>
       </div>
     </div>
