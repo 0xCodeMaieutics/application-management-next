@@ -69,7 +69,7 @@ export function ApplicationForm({ visaType }: { visaType: $Enums.VisaType }) {
       shoeSize: "38",
       previousStayInGermany: "Ja",
       previousStayPlace: "Hamburg",
-      previousStayPeriodFrom: "Juni 2023",
+      previousStayPeriodFrom: undefined,
       previousStayPeriodTo: "August 2023",
       taxId: "12345678901",
       phone: "+49 151 12345678",
