@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "sonner";
+import { ClientProviders } from "./layout.client";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,15 +16,19 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`flex flex-col h-dvh w-full antialiased`}>
-        <header>
-          <nav className="w-full border-b bg-background/50 backdrop-blur-sm px-6 py-8">
-            <p className="text-lg font-bold">International Recruitement GmbH</p>
-          </nav>
-        </header>
-        <main className="flex-1 w-full gap-6 items-center justify-center px-4 md:px-0">
-          {children}
-        </main>
-        <Toaster />
+        <ClientProviders>
+          <header>
+            <nav className="w-full border-b bg-background/50 backdrop-blur-sm px-6 py-8">
+              <p className="text-lg font-bold">
+                International Recruitement GmbH
+              </p>
+            </nav>
+          </header>
+          <main className="flex-1 w-full gap-6 items-center justify-center px-4 md:px-0">
+            {children}
+          </main>
+          <Toaster />
+        </ClientProviders>
       </body>
     </html>
   );

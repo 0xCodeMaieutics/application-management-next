@@ -1,19 +1,18 @@
 "use client";
 
-import { useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
 import { FieldError } from "@/components/ui/field";
 import { loginFormSchema } from "./login-form-schema";
+import { useSignIn } from "@/lib/mutations/use-sign-in";
 
 export function LoginForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const signInMutation = useSignIn();
 
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -23,30 +22,8 @@ export function LoginForm() {
     },
   });
 
-  async function onSubmit(data: z.infer<typeof loginFormSchema>) {
-    setIsSubmitting(true);
-
-    try {
-      const formData = new FormData();
-      formData.append("email", data.email);
-      formData.append("password", data.password);
-      const response = await fetch("/api/auth/admin/login", {
-        method: "POST",
-        body: formData,
-      });[]
-
-      if (!response.ok) {
-        throw new Error("Login failed");
-      }
-
-      if (response.redirected) {
-        window.location.href = response.url;
-      }
-    } catch (error) {
-      toast.error("Login failed. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
+  function onSubmit(data: z.infer<typeof loginFormSchema>) {
+    signInMutation.mutate(data);
   }
 
   return (
@@ -94,8 +71,12 @@ export function LoginForm() {
         </div>
 
         <div className="mt-6">
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Logging in..." : "Login"}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={signInMutation.isPending}
+          >
+            {signInMutation.isPending ? "Logging in..." : "Login"}
           </Button>
         </div>
       </form>
