@@ -8,12 +8,16 @@ import { encrypt } from "@/utils/encrypt";
 const prisma = new PrismaClient();
 
 const action = process.argv[2];
-const password = process.argv[3];
-const email = "admin@application-management.com";
+const email = process.argv[3];
+const password = process.argv[4];
 void (async function main() {
   await prisma.$connect();
 
-  if (action === "create-admin" && typeof password === "string") {
+  if (
+    action === "create-admin" &&
+    typeof email === "string" &&
+    typeof password === "string"
+  ) {
     await prisma.user.create({
       data: {
         email,
@@ -38,6 +42,7 @@ void (async function main() {
         },
       },
     });
+    console.log(`Admin ${email} successfully created ✅`);
   } else if (action === "delete") {
     await prisma.user.deleteMany({
       where: {

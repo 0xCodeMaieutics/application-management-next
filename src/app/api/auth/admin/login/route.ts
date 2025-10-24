@@ -1,14 +1,15 @@
 import { env } from "@/env";
 import { prisma } from "@/lib/db/prisma-client";
 import { decrypt } from "@/utils/encrypt";
+import { redirect } from "next/navigation";
+import { NextRequest, NextResponse } from "next/server";
 
-export const POST = async (request: Request) => {
+export const POST = async (request: NextRequest) => {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
 
   try {
-    const decryptedPassword = decrypt(String(password), env.ENCRYPTION_KEY);
     if (!email || !password) {
       throw new Error("Missing email or password");
     }
@@ -37,16 +38,16 @@ export const POST = async (request: Request) => {
       account.password,
       env.ENCRYPTION_KEY
     );
-    if (storedDecryptedPassword !== decryptedPassword) {
+    if (storedDecryptedPassword !== String(password)) {
       throw new Error("Invalid credentials");
     }
-    return new Response(null, { status: 302 });
+    return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   } catch (error) {
     if (error instanceof Error) {
       console.error("Error during admin login:", error.message);
     } else {
       console.error("Unknown error during admin login");
     }
-    return new Response("Internal server error", { status: 500 });
+    return new NextResponse("Internal server error", { status: 500 });
   }
 };

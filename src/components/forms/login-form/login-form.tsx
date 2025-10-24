@@ -18,8 +18,8 @@ export function LoginForm() {
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "anna@application.com",
+      password: "#AdminIsCool2025",
     },
   });
 
@@ -27,21 +27,21 @@ export function LoginForm() {
     setIsSubmitting(true);
 
     try {
-      // Here you would typically make your auth API call
-      const response = await fetch("/api/auth/login", {
+      const formData = new FormData();
+      formData.append("email", data.email);
+      formData.append("password", data.password);
+      const response = await fetch("/api/auth/admin/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+        body: formData,
+      });[]
 
       if (!response.ok) {
         throw new Error("Login failed");
       }
 
-      toast.success("Successfully logged in!");
-      // Here you would typically handle successful login (e.g., redirect)
+      if (response.redirected) {
+        window.location.href = response.url;
+      }
     } catch (error) {
       toast.error("Login failed. Please try again.");
     } finally {
