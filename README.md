@@ -92,3 +92,8 @@ Ort, Datum, Unterschrift:
 - ORM: Prisma
 - Auth: Better-Auth
 - File Storage: UploadThing
+
+
+## Features
+- Real time display of places we have from the Büros.
+   - Newsletter -> Get notified when there are new visa oppurtunities available.

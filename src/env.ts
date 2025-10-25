@@ -26,6 +26,11 @@ export const env = createEnv({
       .string()
       .min(32)
       .describe("Hexadecimal string of 32 bytes"),
+
+    AWS_REGION: z.string(),
+    AWS_ACCESS_KEY_ID: z.string(),
+    AWS_SECRET_ACCESS_KEY: z.string(),
+    AWS_BUCKET_NAME: z.string(),
   },
 
   /**
@@ -51,6 +56,11 @@ export const env = createEnv({
     TELEGRAM_BOT_CHAT_ID: process.env.TELEGRAM_BOT_CHAT_ID,
 
     ENCRYPTION_KEY: process.env.ENCRYPTION_KEY,
+
+    AWS_REGION: process.env.AWS_REGION,
+    AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
+    AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
+    AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
