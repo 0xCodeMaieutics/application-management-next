@@ -1,7 +1,6 @@
 import z from "zod";
 
-const acceptedImageTypes = ["image/png", "image/jpeg"];
-const acceptedPassportTypes = ["application/pdf"];
+const acceptedFileTypes = ["image/png", "image/jpeg", "image/jpg"];
 // const acceptedVideoTypes = ["video/mp4", "video/quicktime"];
 
 export const applicationFormSchema = z.object({
@@ -56,21 +55,23 @@ export const applicationFormSchema = z.object({
   emergencyPhone: z.string().min(1, "Notfall-Telefonnummer ist erforderlich"),
 
   // File Uploads
-  // foto: z
-  //   .instanceof(File, { message: "Foto ist erforderlich" })
-  //   .refine((file) => acceptedImageTypes.includes(file.type), {
-  //     message: "Nur PNG oder JPG Dateien sind erlaubt",
-  //   }),
-  // passport: z
-  //   .instanceof(File, { message: "Reisepass ist erforderlich" })
-  //   .refine((file) => acceptedPassportTypes.includes(file.type), {
-  //     message: "Nur PDF Dateien sind erlaubt",
-  //   }),
-  // introductionVideo: z
-  //   .instanceof(File, { message: "Ein Vorstellungsvideo ist erforderlich" })
-  //   .refine((file) => acceptedVideoTypes.includes(file.type), {
-  //     message: "Nur MP4 Dateien sind erlaubt",
-  //   }),
+  foto: z
+    .instanceof(File)
+    .refine((file) => acceptedFileTypes.includes(file.type), {
+      message: "Nur PNG oder JPG Dateien sind erlaubt",
+    }),
+  passport: z
+    .instanceof(File)
+    .refine((file) => acceptedFileTypes.includes(file.type), {
+      message: "Nur PNG oder JPG Dateien sind erlaubt",
+    }),
+  languageCertificate: z
+    .instanceof(File)
+    .refine((file) => acceptedFileTypes.includes(file.type), {
+      message: "Nur PNG oder JPG Dateien sind erlaubt",
+    })
+    .optional(),
+  studyCertificate: z.instanceof(File).optional(),
 });
 
 export type ApplicationFormData = z.infer<typeof applicationFormSchema>;

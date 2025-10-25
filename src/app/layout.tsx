@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { ClientProviders } from "./layout.client";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+import { ourFileRouter } from "./api/uploadthing/core";
+import { Header } from "@/components/core/header";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,16 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`flex flex-col h-dvh w-full antialiased`}>
+        <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
         <ClientProviders>
-          <header className="fixed top-0 left-0 right-0 z-50">
-            <nav className="w-full border-b bg-background/50 backdrop-blur-sm px-6 py-8">
-              <p className="text-lg font-bold">
-                International Recruitement GmbH
-              </p>
-            </nav>
-          </header>
-          <main className="flex-1 w-full gap-6 items-center justify-center px-4 md:px-0">
-            {children}
+          <Header />
+          <main className="flex-1 w-dvw gap-6 items-center justify-center px-4 md:px-0">
+            <div className="w-full h-full mx-auto max-w-6xl">{children}</div>
           </main>
           <Toaster />
         </ClientProviders>

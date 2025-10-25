@@ -27,6 +27,7 @@ import { useMutation } from "@tanstack/react-query";
 import { saveKKBApplication } from "@/utils/server-actions/application/save-kkb-application";
 import { useRouter } from "next/navigation";
 import { $Enums } from "@prisma/client";
+import { uploadFiles } from "@/lib/file";
 
 export function ApplicationForm({ visaType }: { visaType: $Enums.VisaType }) {
   const router = useRouter();
@@ -149,8 +150,27 @@ export function ApplicationForm({ visaType }: { visaType: $Enums.VisaType }) {
 
   const { mutateAsync: submitApplication, isPending: isSubmitting } =
     useMutation<void, Error, ApplicationFormData, unknown>({
-      mutationFn: (data) => saveKKBApplication(data, visaType),
-      onSuccess: () => {
+      mutationFn: async (data) => {
+        // convert pdf to png
+        const result = await uploadFiles("imageUploader", {
+          files: [
+            data.foto,
+            data.passport,
+            data.studyCertificate,
+            data.languageCertificate,
+          ].filter((value) => value instanceof File),
+          onUploadProgress: (data) => {
+            console.log({ data });
+            if (data.delta !== 0) {
+              console.log("uploaded");
+            }
+          },
+        });
+        console.log({ result });
+
+        return saveKKBApplication(data, visaType);
+      },
+      onSuccess: async () => {
         router.push("/applications/success");
       },
       onError: () => {
@@ -1047,10 +1067,54 @@ export function ApplicationForm({ visaType }: { visaType: $Enums.VisaType }) {
                     <FieldLabel htmlFor="passport">Passport *</FieldLabel>
                     <FileUpload
                       id="passport"
-                      accept=".pdf"
+                      accept=".png,.jpg,.jpeg"
                       value={field.value || null}
                       onChange={(file) => field.onChange(file)}
                       placeholder="Reisepass hochladen"
+                      required
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Controller
+                name="languageCertificate"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="languageCertificate">
+                      Sprach Nachweis (optional)
+                    </FieldLabel>
+                    <FileUpload
+                      id="languageCertificate"
+                      accept=".png,.jpg,.jpeg"
+                      value={field.value || null}
+                      onChange={(file) => field.onChange(file)}
+                      placeholder="Sprach Nachweis hochladen"
+                      required
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Controller
+                name="studyCertificate"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="studyCertificate">
+                      Sprach Nachweis (optional)
+                    </FieldLabel>
+                    <FileUpload
+                      id="studyCertificate"
+                      accept=".png,.jpg,.jpeg"
+                      value={field.value || null}
+                      onChange={(file) => field.onChange(file)}
+                      placeholder="Studien Nachweis hochladen"
                       required
                     />
                     {fieldState.invalid && (
