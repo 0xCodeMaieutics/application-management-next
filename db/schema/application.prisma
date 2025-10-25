@@ -53,8 +53,10 @@ model Application {
   instagram String?
 
   // Files
-  fotoUrl     String
-  passportUrl String
+  fotoKey                String
+  passportKey            String
+  languageCertificateKey String?
+  studyCertificateKey    String?
 
   // Emergency Contact
   emergencyContactName  String
