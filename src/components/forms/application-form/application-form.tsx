@@ -18,18 +18,16 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { FileUpload } from "@/components/ui/file-upload";
+import { Textarea } from "@/components/ui/textarea";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { VisaTypeEnum } from "@/utils/models/visa";
 import {
   ApplicationFormData,
   applicationFormSchema,
-} from "./application-form-schema";
-import { Textarea } from "@/components/ui/textarea";
-import { useMutation } from "@tanstack/react-query";
-import { saveKKBApplication } from "@/utils/server-actions/application/save-kkb-application";
-import { useRouter } from "next/navigation";
-import { $Enums } from "@prisma/client";
-import { uploadFiles } from "@/lib/file";
+} from "@/utils/models/applications/applications";
 
-export function ApplicationForm({ visaType }: { visaType: $Enums.VisaType }) {
+export function ApplicationForm({ visaType }: { visaType: VisaTypeEnum }) {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof applicationFormSchema>>({
@@ -37,7 +35,7 @@ export function ApplicationForm({ visaType }: { visaType: $Enums.VisaType }) {
     defaultValues: {
       firstName: "Anna",
       lastName: "Schmidt",
-      gender: "weiblich",
+      gender: "female",
       nationality: "Deutsch",
       birthDate: "1999-03-15",
       birthPlace: "München",
@@ -61,8 +59,8 @@ export function ApplicationForm({ visaType }: { visaType: $Enums.VisaType }) {
       otherLanguages: "Englisch B2, Französisch A2",
 
       driverLicense: "B",
-      canRideBike: "Ja",
-      shiftWork: "Ja",
+      canRideBike: false,
+      shiftWork: false,
 
       healthRestrictions: "Keine besonderen Einschränkungen",
       allergies: "Nussallergie",
@@ -149,26 +147,25 @@ export function ApplicationForm({ visaType }: { visaType: $Enums.VisaType }) {
   }, [form.formState.errors, form.formState.isSubmitted, scrollToFirstError]);
 
   const { mutateAsync: submitApplication, isPending: isSubmitting } =
-    useMutation<void, Error, ApplicationFormData, unknown>({
+    useMutation<unknown, Error, ApplicationFormData, unknown>({
       mutationFn: async (data) => {
-        // convert pdf to png
-        const result = await uploadFiles("imageUploader", {
-          files: [
-            data.foto,
-            data.passport,
-            data.studyCertificate,
-            data.languageCertificate,
-          ].filter((value) => value instanceof File),
-          onUploadProgress: (data) => {
-            console.log({ data });
-            if (data.delta !== 0) {
-              console.log("uploaded");
-            }
-          },
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value]) => {
+          if (value === undefined) return;
+          if (value instanceof Date) {
+            formData.append(key, value.toISOString());
+          }
+          if (value instanceof File) {
+            formData.append(key, value, value.name);
+          } else {
+            formData.append(key, value as string);
+          }
         });
-        console.log({ result });
-
-        return saveKKBApplication(data, visaType);
+        formData.append("visaType", visaType);
+        return fetch("/api/application", {
+          method: "POST",
+          body: formData,
+        });
       },
       onSuccess: async () => {
         router.push("/applications/success");
@@ -252,25 +249,25 @@ export function ApplicationForm({ visaType }: { visaType: $Enums.VisaType }) {
                     <div className="flex gap-4">
                       <Radio
                         {...field}
-                        value="männlich"
-                        checked={field.value === "männlich"}
-                        onChange={() => field.onChange("männlich")}
+                        value="male"
+                        checked={field.value === "male"}
+                        onChange={() => field.onChange("male")}
                         label="männlich"
                         id="gender-male"
                       />
                       <Radio
                         {...field}
-                        value="weiblich"
-                        checked={field.value === "weiblich"}
-                        onChange={() => field.onChange("weiblich")}
+                        value="female"
+                        checked={field.value === "female"}
+                        onChange={() => field.onChange("female")}
                         label="weiblich"
                         id="gender-female"
                       />
                       <Radio
                         {...field}
-                        value="divers"
-                        checked={field.value === "divers"}
-                        onChange={() => field.onChange("divers")}
+                        value="diverse"
+                        checked={field.value === "diverse"}
+                        onChange={() => field.onChange("diverse")}
                         label="divers"
                         id="gender-diverse"
                       />
@@ -666,16 +663,16 @@ export function ApplicationForm({ visaType }: { visaType: $Enums.VisaType }) {
                       <Radio
                         {...field}
                         value="Ja"
-                        checked={field.value === "Ja"}
-                        onChange={() => field.onChange("Ja")}
+                        checked={field.value === true}
+                        onChange={() => field.onChange(true)}
                         label="Ja"
                         id="bike-yes"
                       />
                       <Radio
                         {...field}
                         value="Nein"
-                        checked={field.value === "Nein"}
-                        onChange={() => field.onChange("Nein")}
+                        checked={field.value === false}
+                        onChange={() => field.onChange(false)}
                         label="Nein"
                         id="bike-no"
                       />
@@ -697,16 +694,16 @@ export function ApplicationForm({ visaType }: { visaType: $Enums.VisaType }) {
                       <Radio
                         {...field}
                         value="Ja"
-                        checked={field.value === "Ja"}
-                        onChange={() => field.onChange("Ja")}
+                        checked={field.value === true}
+                        onChange={() => field.onChange(true)}
                         label="Ja"
                         id="shift-yes"
                       />
                       <Radio
                         {...field}
                         value="Nein"
-                        checked={field.value === "Nein"}
-                        onChange={() => field.onChange("Nein")}
+                        checked={field.value === false}
+                        onChange={() => field.onChange(false)}
                         label="Nein"
                         id="shift-no"
                       />
@@ -1048,7 +1045,7 @@ export function ApplicationForm({ visaType }: { visaType: $Enums.VisaType }) {
                     <FileUpload
                       id="foto"
                       accept=".png,.jpg,.jpeg"
-                      value={field.value || null}
+                      value={field.value}
                       onChange={(file) => field.onChange(file)}
                       placeholder="Foto hochladen"
                       required
@@ -1067,7 +1064,7 @@ export function ApplicationForm({ visaType }: { visaType: $Enums.VisaType }) {
                     <FieldLabel htmlFor="passport">Passport *</FieldLabel>
                     <FileUpload
                       id="passport"
-                      accept=".png,.jpg,.jpeg"
+                      accept=".pdf"
                       value={field.value || null}
                       onChange={(file) => field.onChange(file)}
                       placeholder="Reisepass hochladen"
@@ -1089,7 +1086,7 @@ export function ApplicationForm({ visaType }: { visaType: $Enums.VisaType }) {
                     </FieldLabel>
                     <FileUpload
                       id="languageCertificate"
-                      accept=".png,.jpg,.jpeg"
+                      accept=".pdf"
                       value={field.value || null}
                       onChange={(file) => field.onChange(file)}
                       placeholder="Sprach Nachweis hochladen"
@@ -1111,7 +1108,7 @@ export function ApplicationForm({ visaType }: { visaType: $Enums.VisaType }) {
                     </FieldLabel>
                     <FileUpload
                       id="studyCertificate"
-                      accept=".png,.jpg,.jpeg"
+                      accept=".pdf"
                       value={field.value || null}
                       onChange={(file) => field.onChange(file)}
                       placeholder="Studien Nachweis hochladen"

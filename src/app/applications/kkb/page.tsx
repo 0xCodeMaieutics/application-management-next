@@ -2,7 +2,7 @@ import { ApplicationForm } from "@/components/forms/application-form/application
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
-import { $Enums } from "@prisma/client";
+import { VisaTypeEnum } from "@/utils/models/visa";
 
 const KKBPage = async ({
   searchParams,
@@ -24,9 +24,9 @@ const KKBPage = async ({
         <ApplicationForm
           visaType={
             {
-              "3": $Enums.VisaType.KKB_3_MONTHS,
-              "8": $Enums.VisaType.KKB_8_MONTHS,
-            }[visa_duration_in_months as string] || $Enums.VisaType.KKB_8_MONTHS
+              "3": VisaTypeEnum.KKB_3_MONTHS,
+              "8": VisaTypeEnum.KKB_8_MONTHS,
+            }[visa_duration_in_months as string] || VisaTypeEnum.KKB_8_MONTHS
           }
         />
       </div>

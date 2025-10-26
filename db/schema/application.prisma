@@ -32,8 +32,8 @@ model Application {
   germanLevel        String?
   otherLanguages     String?
   driverLicense      String?
-  canRideBike        String?
-  shiftWork          String?
+  canRideBike        Boolean?
+  shiftWork          Boolean?
   healthRestrictions String?
   allergies          String?
   clothingSize       String?
