@@ -2,7 +2,7 @@ import { env } from "@/env";
 import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { s3Client } from "./s3-client";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-
+import { Upload } from "@aws-sdk/lib-storage";
 const CONTENT_TYPE = "application/octet-stream";
 
 export const putObject = async ({
@@ -36,7 +36,6 @@ export const putObjects = ({
   bucketName: string;
   contentTypes: string[];
 }) => {
-  // ensure the sizes of keys, bodies, and contentTypes match
   if (keys.length !== bodies.length) {
     throw new Error("Keys and bodies must have the same length");
   }
@@ -45,19 +44,26 @@ export const putObjects = ({
       "ContentTypes must be empty or have the same length as keys"
     );
   }
-  const commands = keys.map(
-    (k, i) =>
-      new PutObjectCommand({
-        Bucket: bucketName,
-        Key: k,
-        Body: bodies[i],
-        ContentType: contentTypes[i] || CONTENT_TYPE,
-      })
+  return Promise.all(
+    keys
+      .map(
+        (k, i) =>
+          new Upload({
+            client: s3Client,
+            params: {
+              Bucket: bucketName,
+              Key: k,
+              Body: bodies[i],
+              ContentType: contentTypes[i] || CONTENT_TYPE,
+            },
+          })
+      )
+      .map((upload) => upload.done())
   );
-  return Promise.all(commands.map((cmd) => s3Client.send(cmd)));
 };
 
 const EXPIRES_IN = 3600;
+
 export const getPresignedUrl = async ({
   key,
   bucketName = env.AWS_BUCKET_NAME,
