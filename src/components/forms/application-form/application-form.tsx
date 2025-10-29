@@ -183,7 +183,7 @@ export function ApplicationForm({ visaType }: { visaType: VisaTypeEnum }) {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4">
+    <div className="w-full">
       <h1 className="text-2xl font-bold mb-2">KKB Bewerbungsformular</h1>
       <p className="text-sm text-muted-foreground mb-6">
         Bitte füllen Sie alle erforderlichen Felder aus.

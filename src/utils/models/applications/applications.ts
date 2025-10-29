@@ -1,3 +1,4 @@
+import { $Enums, Prisma } from "@prisma/client";
 import z from "zod";
 
 const acceptedImageTypes = ["image/png", "image/jpeg", "image/jpg"];
@@ -77,3 +78,28 @@ export const applicationFormSchema = z.object({
 });
 
 export type ApplicationFormData = z.infer<typeof applicationFormSchema>;
+
+export type Application = Prisma.ApplicationGetPayload<{
+  select: {
+    id: true;
+    firstName: true;
+    lastName: true;
+    email: true;
+    instagram: true;
+    phone: true;
+    status: true;
+    visa: {
+      select: {
+        id: true;
+        type: true;
+      };
+    };
+  };
+}>;
+
+export type ApplicationStatus = $Enums.ApplicationStatus;
+export const ApplicationStatus = {
+  PENDING: $Enums.ApplicationStatus.PENDING,
+  APPROVED: $Enums.ApplicationStatus.APPROVED,
+  REJECTED: $Enums.ApplicationStatus.REJECTED,
+};

@@ -1,4 +1,81 @@
-const DashboardPage = () => {
-  return <div>Welcome to the Admin Dashboard</div>;
+import { prisma } from "@/lib/db/prisma-client";
+import { DashboardTableContent } from "./page.client";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { LoaderCircle } from "lucide-react";
+import { Suspense } from "react";
+
+export const dynamic = "force-dynamic";
+
+const DashboardPage = async () => {
+  const applications = await prisma.application.findMany({
+    where: {},
+    select: {
+      id: true,
+      firstName: true,
+      lastName: true,
+      email: true,
+      instagram: true,
+      phone: true,
+      status: true,
+      visa: {
+        select: {
+          id: true,
+          type: true,
+        },
+      },
+    },
+  });
+
+  const tableHeaders = [
+    "Name",
+    "Email",
+    "Instagram",
+    "Phone",
+    "Visa type",
+    "Status",
+  ];
+
+  return (
+    <div className="w-full mx-auto space-y-6 pt-40 pb-10">
+      <h1 className="text-2xl font-bold">Applications</h1>
+      <div className="space-y-2">
+        <Table className="w-full z-0">
+          <TableHeader className="h-14 ssticky top-0 z-10 pb-1">
+            <TableRow>
+              {tableHeaders.map((header) => (
+                <TableHead className="text-xs" key={header}>
+                  {header}
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody className="overflow-y-auto">
+            <Suspense
+              fallback={
+                <TableRow>
+                  <TableCell
+                    colSpan={tableHeaders.length}
+                    className="text-center text-muted-foreground"
+                  >
+                    <LoaderCircle className="mr-2 inline-block size-4 animate-spin" />
+                    Loading...
+                  </TableCell>
+                </TableRow>
+              }
+            >
+              <DashboardTableContent applications={applications} />
+            </Suspense>
+          </TableBody>
+        </Table>
+      </div>
+    </div>
+  );
 };
 export default DashboardPage;
