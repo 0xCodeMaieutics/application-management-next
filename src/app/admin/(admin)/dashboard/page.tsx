@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/table";
 import { LoaderCircle } from "lucide-react";
 import { Suspense } from "react";
+import { redirect } from "next/navigation";
+import { Pagination } from "@/components/shared/pagination";
 
 export const dynamic = "force-dynamic";
 
@@ -22,28 +24,88 @@ const TABLE_HEADERS = [
   "Status",
 ];
 
-const DashboardPage = async () => {
-  const applications = await prisma.application.findMany({
-    where: {},
-    orderBy: {
-      createdAt: "desc",
-    },
-    select: {
-      id: true,
-      firstName: true,
-      lastName: true,
-      email: true,
-      instagram: true,
-      phone: true,
-      status: true,
-      visa: {
-        select: {
-          id: true,
-          type: true,
+const DEFAULT_PAGE = "1";
+const DEFAULT_PAGE_SIZE = "25";
+const DEFAULT_PAGES = [10, 25, 50, 100];
+const getPaginationSearchParams = (searchParams: {
+  [key: string]: string | string[] | undefined;
+}) => {
+  const currentSearchParams = new URLSearchParams(
+    Object.entries(searchParams)
+      .map(([key, value]) =>
+        value === undefined
+          ? undefined
+          : Array.isArray(value)
+          ? undefined
+          : [key, value]
+      )
+      .filter((entry) => entry !== undefined)
+  );
+
+  const page = parseInt(
+    typeof searchParams.page === "string" ? searchParams.page : DEFAULT_PAGE
+  );
+  if (isNaN(page) || page < 1) {
+    currentSearchParams.set("page", DEFAULT_PAGE);
+    return redirect("?" + currentSearchParams.toString());
+  }
+
+  const pageSize = parseInt(
+    typeof searchParams.pageSize === "string"
+      ? searchParams.pageSize
+      : DEFAULT_PAGE_SIZE
+  );
+  if (isNaN(pageSize) || !DEFAULT_PAGES.includes(pageSize)) {
+    currentSearchParams.set("pageSize", DEFAULT_PAGE_SIZE);
+    return redirect("?" + currentSearchParams.toString());
+  }
+
+  return {
+    pageSize,
+    page,
+  };
+};
+
+export default async function DashboardPage({
+  searchParams: searchParamsPromise,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const searchParams = await searchParamsPromise;
+  console.log({ searchParams });
+
+  // const search =
+  // typeof searchParams.search === "string" ? searchParams.search : undefined;
+  const { page, pageSize } = getPaginationSearchParams(searchParams);
+
+  const [totalApplications, applications] = await Promise.all([
+    prisma.application.count({
+      where: {},
+    }),
+    prisma.application.findMany({
+      where: {},
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: pageSize,
+      skip: page,
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        instagram: true,
+        phone: true,
+        status: true,
+        visa: {
+          select: {
+            id: true,
+            type: true,
+          },
         },
       },
-    },
-  });
+    }),
+  ]);
 
   return (
     <div className="w-full mx-auto space-y-6 pt-40 pb-10">
@@ -77,8 +139,14 @@ const DashboardPage = async () => {
             </Suspense>
           </TableBody>
         </Table>
+        <Suspense fallback={null}>
+          <Pagination
+            pageSize={pageSize}
+            currentPage={page}
+            total={totalApplications}
+          />
+        </Suspense>
       </div>
     </div>
   );
-};
-export default DashboardPage;
+}
