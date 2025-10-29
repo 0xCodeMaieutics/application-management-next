@@ -70,6 +70,12 @@ model Application {
   userId String?
   user   User?   @relation(fields: [userId], references: [id])
 
+  officeId String? @unique
+  office   Office? @relation(fields: [officeId], references: [id])
+
+  employerId String?   @unique
+  employer   Employer? @relation(fields: [employerId], references: [id])
+
   visa Visa?
 
   @@map("application")
