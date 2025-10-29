@@ -13,6 +13,15 @@ import { Suspense } from "react";
 
 export const dynamic = "force-dynamic";
 
+const TABLE_HEADERS = [
+  "Name",
+  "Email",
+  "Instagram",
+  "Phone",
+  "Visa type",
+  "Status",
+];
+
 const DashboardPage = async () => {
   const applications = await prisma.application.findMany({
     where: {},
@@ -33,15 +42,6 @@ const DashboardPage = async () => {
     },
   });
 
-  const tableHeaders = [
-    "Name",
-    "Email",
-    "Instagram",
-    "Phone",
-    "Visa type",
-    "Status",
-  ];
-
   return (
     <div className="w-full mx-auto space-y-6 pt-40 pb-10">
       <h1 className="text-2xl font-bold">Applications</h1>
@@ -49,7 +49,7 @@ const DashboardPage = async () => {
         <Table className="w-full z-0">
           <TableHeader className="h-14 ssticky top-0 z-10 pb-1">
             <TableRow>
-              {tableHeaders.map((header) => (
+              {TABLE_HEADERS.map((header) => (
                 <TableHead className="text-xs" key={header}>
                   {header}
                 </TableHead>
@@ -61,7 +61,7 @@ const DashboardPage = async () => {
               fallback={
                 <TableRow>
                   <TableCell
-                    colSpan={tableHeaders.length}
+                    colSpan={TABLE_HEADERS.length}
                     className="text-center text-muted-foreground"
                   >
                     <LoaderCircle className="mr-2 inline-block size-4 animate-spin" />
