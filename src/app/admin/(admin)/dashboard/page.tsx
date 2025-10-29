@@ -25,6 +25,9 @@ const TABLE_HEADERS = [
 const DashboardPage = async () => {
   const applications = await prisma.application.findMany({
     where: {},
+    orderBy: {
+      createdAt: "desc",
+    },
     select: {
       id: true,
       firstName: true,
