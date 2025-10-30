@@ -26,13 +26,6 @@ void (async function main() {
         emailVerified: false,
         role: UserRole.ADMIN,
         id: generateRandomString(32),
-        sessions: {
-          create: {
-            id: generateRandomString(32),
-            expiresAt: new Date("2099-12-31T23:59:59.999Z"),
-            token: generateRandomString(64),
-          },
-        },
         accounts: {
           create: {
             id: generateRandomString(32),
@@ -52,6 +45,8 @@ void (async function main() {
     });
   } else if (action === "delete-all-tables") {
     await prisma.user.deleteMany();
+    await prisma.userSettings.deleteMany();
+    await prisma.employer.deleteMany();
     await prisma.session.deleteMany();
     await prisma.account.deleteMany();
     await prisma.verification.deleteMany();

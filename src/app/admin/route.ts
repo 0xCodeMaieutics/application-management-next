@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export const GET = async (request: Request) => {
+export const GET = (request: NextRequest) => {
   return NextResponse.redirect(new URL("/admin/dashboard", request.url));
 };

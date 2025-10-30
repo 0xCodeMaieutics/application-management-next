@@ -1,8 +1,5 @@
 import { createEnv } from "@t3-oss/env-nextjs";
-import { config } from "dotenv";
 import { z } from "zod";
-
-config();
 
 // Mainly for environment variable validation - nothing more
 export const env = createEnv({
@@ -31,6 +28,8 @@ export const env = createEnv({
     AWS_ACCESS_KEY_ID: z.string(),
     AWS_SECRET_ACCESS_KEY: z.string(),
     AWS_BUCKET_NAME: z.string(),
+
+    JOSE_SECRET: z.string(),
   },
 
   /**
@@ -61,6 +60,8 @@ export const env = createEnv({
     AWS_ACCESS_KEY_ID: process.env.AWS_ACCESS_KEY_ID,
     AWS_SECRET_ACCESS_KEY: process.env.AWS_SECRET_ACCESS_KEY,
     AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
+
+    JOSE_SECRET: process.env.JOSE_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

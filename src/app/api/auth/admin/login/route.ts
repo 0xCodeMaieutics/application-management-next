@@ -1,10 +1,15 @@
 import { env } from "@/env";
 import { prisma } from "@/lib/db/prisma-client";
+import { generateRandomString } from "@/lib/random";
+import { ADMIN_SESSION_COOKIE } from "@/utils/constants";
 import { decrypt } from "@/utils/encrypt";
 import { UserRole } from "@/utils/models/user";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+import { signToken } from "@/lib/token";
 
 export const POST = async (request: NextRequest) => {
+  const c = await cookies();
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
@@ -31,16 +36,38 @@ export const POST = async (request: NextRequest) => {
         providerId: "credential",
       },
     });
+
     if (!account || !account.password) {
       throw new Error("Account not found");
     }
+
     const storedDecryptedPassword = decrypt(
       account.password,
       env.ENCRYPTION_KEY
     );
+
     if (storedDecryptedPassword !== String(password)) {
       throw new Error("Invalid credentials");
     }
+    const expiresAt = new Date("2099-12-31T23:59:59.999Z");
+    const signedToken = await signToken(
+      {
+        userEmail: user.email,
+        userId: user.id,
+        userRole: user.role,
+      },
+      expiresAt
+    );
+
+    await prisma.session.create({
+      data: {
+        id: generateRandomString(32),
+        expiresAt,
+        userId: user.id,
+        token: signedToken,
+      },
+    });
+    c.set(ADMIN_SESSION_COOKIE, signedToken);
     return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   } catch (error) {
     if (error instanceof Error) {

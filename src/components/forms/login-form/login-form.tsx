@@ -10,7 +10,6 @@ import { Field } from "@/components/ui/field";
 import { FieldError } from "@/components/ui/field";
 import { loginFormSchema } from "./login-form-schema";
 import { useSignIn } from "@/lib/mutations/use-sign-in";
-import { env } from "@/env";
 
 const DEV_EMAIL = "anna@application.com";
 const DEV_PASSWORD = "#AdminIsCool2025";
@@ -21,8 +20,9 @@ export function LoginForm() {
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      email: env.NODE_ENV === "development" ? DEV_EMAIL : undefined,
-      password: env.NODE_ENV === "development" ? DEV_PASSWORD : undefined,
+      email: process.env.NODE_ENV === "development" ? DEV_EMAIL : undefined,
+      password:
+        process.env.NODE_ENV === "development" ? DEV_PASSWORD : undefined,
     },
   });
 
