@@ -7,14 +7,31 @@ import {
 } from "@/utils/models/applications/applications";
 import { visaTypeToLabelMap } from "@/utils/models/visa";
 import { VisaType } from "@prisma/client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 export const DashboardTableContent = ({
   applications,
+  totalApplications,
+  currentPage,
+  pageSize,
 }: {
   applications: Application[];
+  totalApplications: number;
+  currentPage: number;
+  pageSize: number;
 }) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const lastPage = Math.max(1, Math.ceil(totalApplications / pageSize));
+    if (applications.length === 0 && currentPage > lastPage) {
+      const newSearchParams = new URLSearchParams(searchParams);
+      newSearchParams.set("page", lastPage.toString());
+      router.push("?" + newSearchParams.toString());
+    }
+  }, [currentPage, applications, pageSize, router, searchParams, totalApplications]);
+
   return applications.map((application) => (
     <TableRow
       onClick={() => {

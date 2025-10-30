@@ -12,6 +12,8 @@ import { LoaderCircle } from "lucide-react";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import { Pagination } from "@/components/shared/pagination";
+import { Prisma } from "@prisma/client";
+import { SearchInput } from "./search-input";
 
 export const dynamic = "force-dynamic";
 
@@ -27,9 +29,69 @@ const TABLE_HEADERS = [
 const DEFAULT_PAGE = "1";
 const DEFAULT_PAGE_SIZE = "25";
 const DEFAULT_PAGES = [10, 25, 50, 100];
-const getPaginationSearchParams = (searchParams: {
-  [key: string]: string | string[] | undefined;
-}) => {
+
+const getPaginationSearchParams = (searchParams: URLSearchParams) => {
+  const page = parseInt(searchParams.get("page") ?? "1");
+  if (isNaN(page) || page < 1) {
+    searchParams.set("page", DEFAULT_PAGE);
+    return redirect("?" + searchParams.toString());
+  }
+
+  const pageSize = parseInt(searchParams.get("pageSize") ?? "1");
+  if (isNaN(pageSize) || !DEFAULT_PAGES.includes(pageSize)) {
+    searchParams.set("pageSize", DEFAULT_PAGE_SIZE);
+    return redirect("?" + searchParams.toString());
+  }
+
+  return {
+    pageSize,
+    page,
+  };
+};
+
+const buildApplicationSearchWhereClause = (search?: string) => {
+  if (search === undefined || search.trim() === "") {
+    return {};
+  }
+  return {
+    OR: [
+      {
+        firstName: {
+          startsWith: search,
+          mode: "insensitive",
+        },
+      },
+      {
+        lastName: {
+          startsWith: search,
+          mode: "insensitive",
+        },
+      },
+      {
+        email: {
+          startsWith: search,
+          mode: "insensitive",
+        },
+      },
+      {
+        instagram: {
+          startsWith: search,
+          mode: "insensitive",
+        },
+      },
+    ],
+  } as Prisma.ApplicationWhereInput;
+};
+
+export default async function DashboardPage({
+  searchParams: searchParamsPromise,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const searchParams = await searchParamsPromise;
+  const search =
+    typeof searchParams.search === "string" ? searchParams.search : undefined;
+
   const currentSearchParams = new URLSearchParams(
     Object.entries(searchParams)
       .map(([key, value]) =>
@@ -42,53 +104,17 @@ const getPaginationSearchParams = (searchParams: {
       .filter((entry) => entry !== undefined)
   );
 
-  const page = parseInt(
-    typeof searchParams.page === "string" ? searchParams.page : DEFAULT_PAGE
-  );
-  if (isNaN(page) || page < 1) {
-    currentSearchParams.set("page", DEFAULT_PAGE);
-    return redirect("?" + currentSearchParams.toString());
-  }
+  const { page, pageSize } = getPaginationSearchParams(currentSearchParams);
 
-  const pageSize = parseInt(
-    typeof searchParams.pageSize === "string"
-      ? searchParams.pageSize
-      : DEFAULT_PAGE_SIZE
-  );
-  if (isNaN(pageSize) || !DEFAULT_PAGES.includes(pageSize)) {
-    currentSearchParams.set("pageSize", DEFAULT_PAGE_SIZE);
-    return redirect("?" + currentSearchParams.toString());
-  }
+  const where = buildApplicationSearchWhereClause(search);
 
-  return {
-    pageSize,
-    page,
-  };
-};
-
-export default async function DashboardPage({
-  searchParams: searchParamsPromise,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const searchParams = await searchParamsPromise;
-  console.log({ searchParams });
-
-  // const search =
-  // typeof searchParams.search === "string" ? searchParams.search : undefined;
-  const { page, pageSize } = getPaginationSearchParams(searchParams);
-
+  const skip = (page - 1) * pageSize;
   const [totalApplications, applications] = await Promise.all([
     prisma.application.count({
-      where: {},
+      where,
     }),
     prisma.application.findMany({
-      where: {},
-      orderBy: {
-        createdAt: "desc",
-      },
-      take: pageSize,
-      skip: page,
+      where,
       select: {
         id: true,
         firstName: true,
@@ -104,12 +130,23 @@ export default async function DashboardPage({
           },
         },
       },
+      take: pageSize,
+      skip,
+      orderBy: {
+        createdAt: "asc",
+      },
     }),
   ]);
-
+  console.log({ page, pageSize, skip, search, applications });
+  console.log({ totalApplications, skip, take: pageSize });
   return (
     <div className="w-full mx-auto space-y-6 pt-40 pb-10">
-      <h1 className="text-2xl font-bold">Applications</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Applications</h1>
+        <div>
+          <SearchInput defaultValue={search} />
+        </div>
+      </div>
       <div className="space-y-2">
         <Table className="w-full z-0">
           <TableHeader className="h-14 ssticky top-0 z-10 pb-1">
@@ -135,7 +172,12 @@ export default async function DashboardPage({
                 </TableRow>
               }
             >
-              <DashboardTableContent applications={applications} />
+              <DashboardTableContent
+                applications={applications}
+                currentPage={page}
+                pageSize={pageSize}
+                totalApplications={totalApplications}
+              />
             </Suspense>
           </TableBody>
         </Table>
