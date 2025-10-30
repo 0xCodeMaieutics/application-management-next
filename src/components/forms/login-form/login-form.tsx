@@ -10,6 +10,10 @@ import { Field } from "@/components/ui/field";
 import { FieldError } from "@/components/ui/field";
 import { loginFormSchema } from "./login-form-schema";
 import { useSignIn } from "@/lib/mutations/use-sign-in";
+import { env } from "@/env";
+
+const DEV_EMAIL = "anna@application.com";
+const DEV_PASSWORD = "#AdminIsCool2025";
 
 export function LoginForm() {
   const signInMutation = useSignIn();
@@ -17,19 +21,18 @@ export function LoginForm() {
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
     defaultValues: {
-      email: "anna@application.com",
-      password: "#AdminIsCool2025",
+      email: env.NODE_ENV === "development" ? DEV_EMAIL : undefined,
+      password: env.NODE_ENV === "development" ? DEV_PASSWORD : undefined,
     },
   });
-
-  function onSubmit(data: z.infer<typeof loginFormSchema>) {
-    signInMutation.mutate(data);
-  }
 
   return (
     <div className="w-full max-w-md mx-auto px-4">
       <h1 className="text-2xl text-center font-bold mb-6">Admin Login</h1>
-      <form onSubmit={form.handleSubmit(onSubmit)} noValidate>
+      <form
+        onSubmit={form.handleSubmit((data) => signInMutation.mutate(data))}
+        noValidate
+      >
         <div className="space-y-4">
           <Controller
             name="email"
