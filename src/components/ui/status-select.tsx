@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ApplicationStatus } from "@/utils/models/applications/applications";
+import { ApplicationStatus } from "@/utils/models/applications";
 import { updateApplicationStatus } from "@/utils/server-actions/application/update-status";
 import { useTransition } from "react";
 import { toast } from "sonner";

@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/db/prisma-client";
-import { ApplicationStatus } from "@/utils/models/applications/applications";
+import { ApplicationStatus } from "@/utils/models/applications";
 import { revalidatePath } from "next/cache";
 
 export async function updateApplicationStatus(

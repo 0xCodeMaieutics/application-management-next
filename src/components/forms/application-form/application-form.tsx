@@ -25,7 +25,7 @@ import { VisaTypeEnum } from "@/utils/models/visa";
 import {
   ApplicationFormData,
   applicationFormSchema,
-} from "@/utils/models/applications/applications";
+} from "@/utils/models/applications";
 
 export function ApplicationForm({ visaType }: { visaType: VisaTypeEnum }) {
   const router = useRouter();
