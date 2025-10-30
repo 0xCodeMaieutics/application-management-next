@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "@prisma/client";
+import { APP_NAME } from "@/utils/constants";
 const prisma = new PrismaClient();
 
 export const auth = betterAuth({
@@ -16,9 +17,12 @@ export const auth = betterAuth({
       role: {
         type: "string",
         required: false,
-        defaultValue: "user",
+        defaultValue: "USER",
         input: false,
       },
-      },
+    },
+  },
+  advanced: {
+    cookiePrefix: APP_NAME,
   },
 });

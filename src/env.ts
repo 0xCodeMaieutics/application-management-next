@@ -30,6 +30,8 @@ export const env = createEnv({
     AWS_BUCKET_NAME: z.string(),
 
     JOSE_SECRET: z.string(),
+
+    BETTER_AUTH_SECRET: z.string(),
   },
 
   /**
@@ -62,6 +64,8 @@ export const env = createEnv({
     AWS_BUCKET_NAME: process.env.AWS_BUCKET_NAME,
 
     JOSE_SECRET: process.env.JOSE_SECRET,
+
+    BETTER_AUTH_SECRET: process.env.BETTER_AUTH_SECRET,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

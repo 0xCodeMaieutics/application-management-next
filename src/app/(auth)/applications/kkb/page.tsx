@@ -1,4 +1,4 @@
-import { ApplicationForm } from "@/components/forms/application-form/application-form";
+import { ApplicationForm } from "@/components/forms/application-form";
 import { Button } from "@/components/ui/button";
 import { ApplicationType } from "@prisma/client";
 import { ArrowLeft } from "lucide-react";

@@ -8,17 +8,54 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Field } from "@/components/ui/field";
 import { FieldError } from "@/components/ui/field";
-import { loginFormSchema } from "./login-form-schema";
-import { useSignIn } from "@/lib/mutations/use-sign-in";
+import { adminLoginFormSchema } from "./schema";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const DEV_EMAIL = "anna@application.com";
 const DEV_PASSWORD = "#AdminIsCool2025";
 
-export function LoginForm() {
-  const signInMutation = useSignIn();
+export function AdminLoginForm() {
+  const signInMutation = useMutation<
+    {
+      success: boolean;
+      redirectUrl?: string;
+    },
+    Error,
+    {
+      email: string;
+      password: string;
+    }
+  >({
+    mutationFn: async (data) => {
+      const formData = new FormData();
+      formData.append("email", data.email);
+      formData.append("password", data.password);
+      const response = await fetch("/api/auth/admin/login", {
+        method: "POST",
+        body: formData,
+      });
+      if (!response.ok) {
+        throw new Error("Login failed");
+      }
+      return {
+        success: true,
+        redirectUrl: response.redirected ? response.url : undefined,
+      };
+    },
+    onSuccess: (data) => {
+      if (data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+      }
+    },
+    onError: (error) => {
+      toast.error("Login failed. Please try again.");
+      console.error("Sign in error:", error);
+    },
+  });
 
-  const form = useForm<z.infer<typeof loginFormSchema>>({
-    resolver: zodResolver(loginFormSchema),
+  const form = useForm<z.infer<typeof adminLoginFormSchema>>({
+    resolver: zodResolver(adminLoginFormSchema),
     defaultValues: {
       email: process.env.NODE_ENV === "development" ? DEV_EMAIL : undefined,
       password:
