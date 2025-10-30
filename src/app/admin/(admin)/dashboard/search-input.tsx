@@ -32,7 +32,7 @@ export function SearchInput({ defaultValue }: { defaultValue?: string }) {
       <Input
         className="w-[300px]"
         type="search"
-        placeholder="Name"
+        placeholder="Name, instagram, email, phone..."
         defaultValue={defaultValue}
         onChange={(e) => {
           setSearch(e.target.value);
