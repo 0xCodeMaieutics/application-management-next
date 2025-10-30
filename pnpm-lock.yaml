@@ -17,9 +17,6 @@ importers:
       '@aws-sdk/s3-request-presigner':
         specifier: ^3.917.0
         version: 3.917.0
-      '@faker-js/faker':
-        specifier: ^10.1.0
-        version: 10.1.0
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.65.0(react@19.1.0))
@@ -93,6 +90,9 @@ importers:
       '@eslint/eslintrc':
         specifier: ^3
         version: 3.3.1
+      '@faker-js/faker':
+        specifier: ^10.1.0
+        version: 10.1.0
       '@tailwindcss/postcss':
         specifier: ^4
         version: 4.1.14
