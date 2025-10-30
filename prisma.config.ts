@@ -7,7 +7,7 @@ export default {
   schema: path.join("db", "schema"),
   migrations: {
     path: path.join("db", "migrations"),
-    seed: "tsx ./db/seed.ts",
+    seed: "tsx ./db/seed/index.ts",
   },
   views: {
     path: path.join("db", "views"),

@@ -7,7 +7,7 @@ import {
   applicationFormSchema,
   Gender,
   GermanLevel,
-} from "@/utils/models/applications/applications";
+} from "@/utils/models/applications";
 import { VisaType } from "@prisma/client";
 
 const APPLICATIONS = "applications";

@@ -1,17 +1,20 @@
-enum EmployerName {
+enum EmployerType {
     DHL
+    GUILI
+    FILDER_PERSONAL
 
     @@map("employer_type")
 }
 
 model Employer {
-    id      String       @id
-    name    EmployerName
-    address String
+    id   String       @id
+    name String       @unique
+    type EmployerType @unique
 
-    createdAt   DateTime      @default(now())
-    updatedAt   DateTime      @updatedAt
     applications Application[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@map("employer")
 }

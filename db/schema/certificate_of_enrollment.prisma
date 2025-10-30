@@ -1,8 +1,0 @@
-model CertificateOfEnrollment {
-    id String @id
-
-    visaStudent   VisaStudent @relation(fields: [visaStudentId], references: [id])
-    visaStudentId String      @unique
-
-    @@map("certificate_of_enrollment")
-}
