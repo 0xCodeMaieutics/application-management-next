@@ -5,6 +5,7 @@ config({
 import { PrismaClient } from "@prisma/client";
 import { generateRandomString } from "../src/lib/random";
 import { encrypt } from "@/utils/encrypt";
+import { UserRole } from "@/utils/models/user";
 const prisma = new PrismaClient();
 
 const action = process.argv[2];
@@ -23,7 +24,7 @@ void (async function main() {
         email,
         name: "Admin",
         emailVerified: false,
-        role: "admin",
+        role: UserRole.ADMIN,
         id: generateRandomString(32),
         sessions: {
           create: {

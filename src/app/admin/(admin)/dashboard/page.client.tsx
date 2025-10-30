@@ -1,12 +1,7 @@
 "use client";
 import { StatusSelect } from "@/components/ui/status-select";
 import { TableCell, TableRow } from "@/components/ui/table";
-import {
-  Application,
-  ApplicationStatus,
-} from "@/utils/models/applications/applications";
-import { visaTypeToLabelMap } from "@/utils/models/visa";
-import { VisaType } from "@prisma/client";
+import { Application, ApplicationStatus, applicationTypeToLabel } from "@/utils/models/applications";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
@@ -30,7 +25,14 @@ export const DashboardTableContent = ({
       newSearchParams.set("page", lastPage.toString());
       router.push("?" + newSearchParams.toString());
     }
-  }, [currentPage, applications, pageSize, router, searchParams, totalApplications]);
+  }, [
+    currentPage,
+    applications,
+    pageSize,
+    router,
+    searchParams,
+    totalApplications,
+  ]);
 
   return applications.map((application) => (
     <TableRow
@@ -49,7 +51,7 @@ export const DashboardTableContent = ({
       </TableCell>
       <TableCell className="font-semibold">{application.phone}</TableCell>
       <TableCell className="font-semibold">
-        {visaTypeToLabelMap[application.visa?.type as VisaType] || "-"}
+        {applicationTypeToLabel[application.type] || "-"}
       </TableCell>
       <TableCell onClick={(e) => e.stopPropagation()}>
         <StatusSelect

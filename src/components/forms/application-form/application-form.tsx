@@ -21,13 +21,13 @@ import { FileUpload } from "@/components/ui/file-upload";
 import { Textarea } from "@/components/ui/textarea";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { VisaTypeEnum } from "@/utils/models/visa";
 import {
   ApplicationFormData,
   applicationFormSchema,
 } from "@/utils/models/applications";
+import { ApplicationType } from "@/utils/models/applications";
 
-export function ApplicationForm({ visaType }: { visaType: VisaTypeEnum }) {
+export function ApplicationForm({ type }: { type: ApplicationType }) {
   const router = useRouter();
 
   const form = useForm<z.infer<typeof applicationFormSchema>>({
@@ -161,7 +161,7 @@ export function ApplicationForm({ visaType }: { visaType: VisaTypeEnum }) {
             formData.append(key, value as string);
           }
         });
-        formData.append("visaType", visaType);
+        formData.append("type", type);
         return fetch("/api/application", {
           method: "POST",
           body: formData,

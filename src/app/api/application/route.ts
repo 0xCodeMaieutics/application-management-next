@@ -3,19 +3,15 @@ import { prisma } from "@/lib/db/prisma-client";
 import { generateRandomString } from "@/lib/random";
 import { putObjects } from "@/lib/s3/s3.server";
 import { getImageExtension, ImageFileType } from "@/utils/file";
-import {
-  applicationFormSchema,
-  Gender,
-  GermanLevel,
-} from "@/utils/models/applications";
-import { VisaType } from "@prisma/client";
+import { applicationFormSchema } from "@/utils/models/applications";
+import { ApplicationType } from "@prisma/client";
 
 const APPLICATIONS = "applications";
 
 export const POST = async (request: Request) => {
   const formData = await request.formData();
 
-  const visaType = formData.get("visaType") as VisaType;
+  const type = formData.get("type") as ApplicationType;
 
   const result = applicationFormSchema.safeParse({
     firstName: formData.get("firstName"),
@@ -68,7 +64,7 @@ export const POST = async (request: Request) => {
   });
 
   try {
-    if (!result.success || !visaType) {
+    if (!result.success || !type) {
       throw new Error("Bad request");
     }
 
@@ -100,6 +96,7 @@ export const POST = async (request: Request) => {
     await prisma.application.create({
       data: {
         id: applicationId,
+        type,
         firstName: result.data.firstName,
         lastName: result.data.lastName,
         gender: result.data.gender,
@@ -170,13 +167,6 @@ export const POST = async (request: Request) => {
               result.data.languageCertificate?.type as ImageFileType
             )
           : null,
-        visa: {
-          create: {
-            id: generateRandomString(32),
-            type: visaType,
-            visaKKB: { create: {} },
-          },
-        },
       },
     });
     return new Response("ok", {

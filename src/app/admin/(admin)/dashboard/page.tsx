@@ -117,18 +117,13 @@ export default async function DashboardPage({
       where,
       select: {
         id: true,
+        type: true,
         firstName: true,
         lastName: true,
         email: true,
         instagram: true,
         phone: true,
         status: true,
-        visa: {
-          select: {
-            id: true,
-            type: true,
-          },
-        },
       },
       take: pageSize,
       skip,

@@ -1,7 +1,7 @@
 import { env } from "@/env";
 import { prisma } from "@/lib/db/prisma-client";
 import { decrypt } from "@/utils/encrypt";
-import { redirect } from "next/navigation";
+import { UserRole } from "@/utils/models/user";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (request: NextRequest) => {
@@ -22,7 +22,7 @@ export const POST = async (request: NextRequest) => {
       throw new Error("User not found");
     }
 
-    if (user.role !== "admin") {
+    if (user.role !== UserRole.ADMIN) {
       throw new Error("User is not an admin");
     }
     const account = await prisma.account.findFirst({
