@@ -59,13 +59,7 @@ const TestPage = () => {
                   id="introductionVideo"
                   accept=".mp4,.mov"
                   value={field.value || null}
-                  onChange={(file) => {
-                    console.log({
-                      file,
-                    });
-
-                    return field.onChange(file);
-                  }}
+                  onChange={(file) => field.onChange(file)}
                   placeholder="Vorstellungsvideo hochladen"
                   required
                 />

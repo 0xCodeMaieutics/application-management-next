@@ -114,8 +114,6 @@ export function ApplicationForm({ type }: { type: ApplicationType }) {
       }
 
       if (fieldElement) {
-        console.log("Scrolling to field:", firstErrorField, fieldElement);
-
         fieldElement.scrollIntoView({
           behavior: "smooth",
           block: "center",

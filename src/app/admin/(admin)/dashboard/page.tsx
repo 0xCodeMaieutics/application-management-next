@@ -132,8 +132,6 @@ export default async function DashboardPage({
       },
     }),
   ]);
-  console.log({ page, pageSize, skip, search, applications });
-  console.log({ totalApplications, skip, take: pageSize });
   return (
     <div className="w-full mx-auto space-y-6 pt-40 pb-10">
       <div className="flex justify-between items-center">
