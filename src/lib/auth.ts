@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { PrismaClient } from "@prisma/client";
-import { APP_NAME } from "@/utils/constants";
+import { APP_SLUG } from "@/utils/constants";
 const prisma = new PrismaClient();
 
 export const auth = betterAuth({
@@ -23,6 +23,6 @@ export const auth = betterAuth({
     },
   },
   advanced: {
-    cookiePrefix: APP_NAME,
+    cookiePrefix: APP_SLUG,
   },
 });

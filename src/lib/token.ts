@@ -1,12 +1,12 @@
 import { env } from "@/env";
-import { APP_NAME } from "@/utils/constants";
+import { APP_SLUG } from "@/utils/constants";
 import { UserRole } from "@/utils/models/user";
 import * as jose from "jose";
 const SECRET = new TextEncoder().encode(env.JOSE_SECRET);
 const ALG = "HS256";
 
-const ISSUER = `urn:${APP_NAME}:issuer`;
-const AUDIENCE = `urn:${APP_NAME}:audience`;
+const ISSUER = `urn:${APP_SLUG}:issuer`;
+const AUDIENCE = `urn:${APP_SLUG}:audience`;
 
 export type TokenPayload = {
   userId: string;
