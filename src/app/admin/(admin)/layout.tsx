@@ -38,5 +38,9 @@ export default async function Layout({ children }: PropsWithChildren) {
   if (tokenPayload.payload.userEmail !== user?.email) redirect("/admin/login");
   if (user?.role !== UserRole.ADMIN) redirect("/admin/login");
 
-  return children;
+  return (
+    <div className="w-full h-full mx-auto max-w-6xl px-4 md:px-0">
+      {children}
+    </div>
+  );
 }
